@@ -1,7 +1,7 @@
 # PIXMOB Bluetooth LE LED Bracelet Reverse Engineering Results
 2017-09-04 W5NYV and KB5MU
 
-Based on testing with the iOS app and a PIXMOB BLE bracelet.
+Based on testing with the iOS PIXMOB app, the Adafruit Bluefruit LE Android App, a Bluefruit LE Friend, and a PIXMOB BLE bracelet.
 
 ## Function Summary
 
