@@ -26,7 +26,7 @@ The second set of mode switches is marked CHANCE and has three options:
 
 The last mode switch is an on/off toggle marked CLAP.
 
-    Enabled	= the bracelet delays acting on the command until it detects a sudden movement
+    Enabled		= the bracelet delays acting on the command until it detects a sudden movement
     Disabled	= the bracelet acts on the command immediately
 
 The iOS app always seems to send commands with the color value set to black whenever no finger is on the color picker. Thus, the bracelet acts as if each tap or hold on the color picker is a complete action, interpreted in real time, with no persistent state. However, testing with synthetic commands shows that the bracelet does have some state. If a solid color command is followed immediately by a strobe color command, for instance, the strobe is superimposed upon the solid color. It is unclear whether this is part of an extended feature set, or simply an accident of implementation.
