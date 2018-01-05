@@ -1,5 +1,7 @@
 # PIXMOB Bluetooth LE LED Bracelet Reverse Engineering Results
+
 2017-09-04 W5NYV and KB5MU
+
 2018-01-05 Googulator
 
 Based on testing with the iOS PIXMOB app, the Adafruit Bluefruit LE Android App, a Bluefruit LE Friend, nRF Connect Android app, and a PIXMOB BLE bracelet.
@@ -19,8 +21,8 @@ The first set of mode switches is marked EFFECT and has three options:
 The second set of mode switches is marked CHANCE and has three options:
 
     100%	= the bracelet acts on every command it receives
-    50%		= the bracelet has a 50% chance of acting on each command it receives
-    10%		= the bracelet has a 10% chance of acting on each command it receives
+    50%	= the bracelet has a 50% chance of acting on each command it receives
+    10%	= the bracelet has a 10% chance of acting on each command it receives
 
 The last mode switch is an on/off toggle marked CLAP.
 
@@ -58,7 +60,7 @@ The 128-bit Service Class UUIDs field is being abused as a general purpose data 
 
     Byte 0		always EE
     Byte 1		Flags field:
-    				Bit 1: Clap mode, delay execution until motion is detected
+				Bit 1: Clap mode, delay execution until motion is detected
 				Bit 2: Multicolor mode, randomly select from a pool of colors at every execution
 				Bit 5: One-shot mode, ignore further identical commands after executing once
 			Others unknown/ignored
@@ -67,7 +69,7 @@ The 128-bit Service Class UUIDs field is being abused as a general purpose data 
     Byte 4		Blue component of color data (00 is off)
     Byte 5	Chance and attack
 		Bit 0-2: chance of executing this command, per https://www.youtube.com/watch?v=_QfQP7jl0Ek
-    			0: 100%
+			0: 100%
 			1: 85%
 			2: 65%
 			3: 50%
