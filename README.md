@@ -66,7 +66,7 @@ The 128-bit Service Class UUIDs field is being abused as a general purpose data 
     Byte 3		Red component of color data (00 is off)
     Byte 4		Blue component of color data (00 is off)
     Byte 5	Chance and attack
-    		Bit 0-2: chance of executing this command, per https://www.youtube.com/watch?v=_QfQP7jl0Ek
+		Bit 0-2: chance of executing this command, per https://www.youtube.com/watch?v=_QfQP7jl0Ek
     			0: 100%
 			1: 85%
 			2: 65%
