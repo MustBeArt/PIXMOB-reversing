@@ -4,8 +4,8 @@ import time
 #This defines the AT command that is sent to the BlueFruit LE Friend for transmission. 
 #The AT command function is built up from multiple smaller function calls.
 #Each smaller function call corresponds to a field in the Bluetooth Low Energy advertising packet. 
-def command_pixmob(red, green, blue, chance, attack, sustain, release, clap, oneshot, group):
-	command ="AT+GAPSETADVDATA="+insert_flags()+insert_uuid_header()+insert_pixmob_flags(clap, oneshot)+insert_color_data(red, green, blue)+insert_asr_chance(chance, attack, sustain, release)+insert_group(group)+insert_eight_bytes_data()+insert_name()
+def command_pixmob(red, green, blue, attack, sustain, release, chance, clap, oneshot, group):
+	command ="AT+GAPSETADVDATA="+insert_flags()+insert_uuid_header()+insert_pixmob_flags(clap, oneshot)+insert_color_data(red, green, blue)+insert_asr_chance(attack, sustain, release, chance)+insert_group(group)+insert_eight_bytes_data()+insert_name()
 	return command
 
 #This field sets the capabilities of the transmitting device (BlueFruit LE Friend)
