@@ -1,14 +1,11 @@
 import serial
 import time
 
-#This is the serial port that the BlueFruit LE Friend was found on my computer
-ser = serial.Serial(port = "/dev/ttyUSB0")
-
 #This defines the AT command that is sent to the BlueFruit LE Friend for transmission. 
 #The AT command function is built up from multiple smaller function calls.
 #Each smaller function call corresponds to a field in the Bluetooth Low Energy advertising packet. 
-def command_pixmob(green, red, blue, mode, chance):
-	command ="AT+GAPSETADVDATA="+insert_flags()+insert_uuid_header()+insert_clap_mode()+insert_color_data(green, red, blue)+insert_mode_chance(mode, chance)+insert_nine_bytes_data()+insert_name()
+def command_pixmob(red, green, blue, attack, sustain, release, chance, clap, oneshot, group):
+	command ="AT+GAPSETADVDATA="+insert_flags()+insert_uuid_header()+insert_pixmob_flags(clap, oneshot)+insert_color_data(red, green, blue)+insert_asr_chance(attack, sustain, release, chance)+insert_group(group)+insert_eight_bytes_data()+insert_name()
 	return command
 
 #This field sets the capabilities of the transmitting device (BlueFruit LE Friend)
@@ -21,22 +18,21 @@ def insert_flags():
 def insert_uuid_header():
 	return "-11-07-EE"
 
-#PixMob bracelets can be configured to respond to clapping of hands
-#(AI) make this an argument in command_pixmob()
-def insert_clap_mode():
-	return "-00"
-	#00 for clap mode off
-	#01 for clap mode on
+#PixMob bracelets can be configured to respond to clapping of hands or to ignore identical commands
+#FIXME there is also a multicolor mode, controlled by flags & 0x2, but it needs a different encoding
+def insert_pixmob_flags(clap, oneshot):
+	return "-" + ("1" if oneshot else "0") + ("1" if clap else "0")
 
 #This field sets the LED colors.
 #(AI) I think there's a better way to do this. Could use a rework. 
-def insert_color_data(green, red, blue):
-	field = ""	
-	field = "-"+str(green)+"-"+str(red)+"-"+str(blue)+"-"
+def insert_color_data(red, green, blue):
+	field = "-%0.2x-%0.2x-%0.2x" % (green, red, blue)
 	return field
 
-#Mode is a value that commands the PixMob LEDs to be solid, pulsing, or strobing.  
+#Attack, sustain and release control how long the fade-in, fully lit and fade-out parts of a light pulse last.
+#When sustain=7 and release=0, the bracelet fades in and stays lit indefinitely.
 #Chance makes a large crowd of PixMob wearables change behavior in different ways.
+#Valid values are 100, 85, 65, 50, 30, 15, 10 and 5.
 #When set to 100, that means commands that change the PixMobs behavior are paid attention to
 #100 percent of the time. All bracelets change at once. 
 #When 50, there's a 50% chance that the bracelet visual behavior will change with each
@@ -50,53 +46,51 @@ def insert_color_data(green, red, blue):
 #change faster, but still not all at once. 
 #100% means that they change behavior with first received packet. This will look very much like
 #they are all changing simultaneously.  
-#Mode is a value that indicates whether the PixMob LEDs are solid, pulsing, or strobing. 
-def insert_mode_chance(mode, chance):
-	if mode == "solid" and chance == 100:
-		return "00-07-"
-	if mode == "solid" and chance == 50:
-		return "03-07-"
-	if mode == "solid" and chance == 10:
-		return "06-07-"
-
-	if mode == "pulse" and chance == 100:
-		return "10-12-"
-	if mode == "pulse" and chance == 50:
-		return "13-12-"
-	if mode == "pulse" and chance == 10:
-		return "16-12-"
-
-	if mode == "strobe" and chance == 100:
-		return "00-09-"
-	if mode == "strobe" and chance == 50:
-		return "03-09-"
-	if mode == "strobe" and chance == 10:
-		return "06-09-"
-
+#Highbit is used to set the seemingly unused bit over the Sustain field, as done sometimes by the iOS app.
+def insert_asr_chance(attack, sustain, release, chance, highbit=0):
+	chances = {
+		100: 0,
+		85: 1,
+		65: 2,
+		50: 3,
+		30: 4,
+		15: 5,
+		10: 6,
+		5: 7,
+	}
 	
-	if mode == "question" and chance == 100:
-		return "00-0F-"
-	if mode == "question" and chance == 50:
-		return "03-0F-"
-	if mode == "question" and chance == 10:
-		return "06-0F-"
+	return "-%0.1x%0.1x-%0.1x%0.1x" % (attack, chances[chance], release, sustain | (highbit<<3))
+
+#Group ID, used to target preprogrammed groups of bracelets.
+#When 0, all bracelets are targeted.
+#When between 1 and 31, only bracelets with that group ID are targeted.
+#The high 3 bits are ignored, so values over 31 are invalid.
+def insert_group(group):
+	return "-%0.2x" % group
 
 #Not sure what these are for. They might be there becuase the
 #128 bit service ID has to be 16 bytes long. In other words, padding. 
-def insert_nine_bytes_data():
-	return "00-00-00-00-00-00-00-00-00-"
+def insert_eight_bytes_data():
+	return "-00-00-00-00-00-00-00-00"
 
 #This makes the local name of the transmitter be "MOB".
 def insert_name():
-	return "04-09-4D-4F-42"
+	return "-04-09-4D-4F-42"
 
-#Construct the bluetooth low energy advertising packet in the form of an AT command. 
-#This is how the BlueFruit LE Friend sends out bluetooth LE packets.
-#The loop range is set to however many repetitions of the AT command one wants to be
-#sent out. There's a short delay between each one.  
-for a in range(0, 5):
-	time.sleep(.5)	
-	#arguments are green, red, blue, mode, chance
-	by_your_command = command_pixmob(00,99,00, "solid", 100)
-	print by_your_command
-	ser.write(by_your_command+"\r\n")
+def main():
+	#This is the serial port that the BlueFruit LE Friend was found on my computer
+	ser = serial.Serial(port = "/dev/ttyUSB0")
+
+	#Construct the bluetooth low energy advertising packet in the form of an AT command. 
+	#This is how the BlueFruit LE Friend sends out bluetooth LE packets.
+	#The loop range is set to however many repetitions of the AT command one wants to be
+	#sent out. There's a short delay between each one.  
+	for a in range(0, 5):
+		time.sleep(.5)	
+		#arguments are red, green, blue, attack, sustain, release, chance, clap, oneshot, group
+		by_your_command = command_pixmob(0x99,0,0, 0,7,0, 100, False, False, 0)
+		print by_your_command
+		ser.write(by_your_command+"\r\n")
+
+if __name__ == "__main__":
+	main()
