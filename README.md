@@ -105,9 +105,9 @@ In multicolor mode, the meaning of bytes 2-6 changes as follows:
 
     Byte 2: low 8 bits of the 12-bit color pool value (encoding unknown)
     Byte 3: Rest of color pool and attack
-    	Bit 0-3: high 4 bits of the 12-bit color pool value
-	Bit 4-5: attack (see above)
-	Bit 6-7: unknown/ignored
+		Bit 0-3: high 4 bits of the 12-bit color pool value
+		Bit 4-5: attack (see above)
+		Bit 6-7: unknown/ignored
     Byte 4: Sustain and release, same as byte 6 in single-color mode
     Byte 5: Chance, see above. Bit 3-7 unknown/ignored.
     Byte 6: unknown/ignored
