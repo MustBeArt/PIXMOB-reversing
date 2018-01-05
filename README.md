@@ -67,31 +67,31 @@ The 128-bit Service Class UUIDs field is being abused as a general purpose data 
     Byte 2		Green component of color data (00 is off)
     Byte 3		Red component of color data (00 is off)
     Byte 4		Blue component of color data (00 is off)
-    Byte 5	Chance and attack
-		Bit 0-2: chance of executing this command, per https://www.youtube.com/watch?v=_QfQP7jl0Ek
-			0: 100%
-			1: 85%
-			2: 65%
-			3: 50%
-			4: 30%
-			5: 15%
-			6: 10%
-			7: 5%
-		Bit 3: unknown/ignored
-		Bit 4-5: attack
-			0: instant
-			1: fast
-			2: medium
-			3: slow
-		Bit 6-7: unknown/ignored
-    Byte 6:	Sustain and release
-		Bit 0-2: sustain
-    			0: none (release immediately follows attack)
-			1-6: increasingly longer intervals
-			7: until overridden by another command (when used with release=0, otherwise identical to 6)
-		Bit 3: unknown, apparently ignored, but used by iOS app
-		Bit 4-5: release, encoding identical to attack
-    Byte 7	Group, uses only the lower 5 bits (3 high bits ignored). 0x00 = all bracelets, 0x01-0x1f: bracelets in specified group
+    Byte 5		Chance and attack
+			Bit 0-2: chance of executing this command, per https://www.youtube.com/watch?v=_QfQP7jl0Ek
+				0: 100%
+				1: 85%
+				2: 65%
+				3: 50%
+				4: 30%
+				5: 15%
+				6: 10%
+				7: 5%
+			Bit 3: unknown/ignored
+			Bit 4-5: attack
+				0: instant
+				1: fast
+				2: medium
+				3: slow
+			Bit 6-7: unknown/ignored
+    Byte 6:		Sustain and release
+			Bit 0-2: sustain
+				0: none (release immediately follows attack)
+				1-6: increasingly longer intervals
+				7: until overridden by another command (when used with release=0, otherwise identical to 6)
+			Bit 3: unknown, apparently ignored, but used by iOS app
+			Bit 4-5: release, encoding identical to attack
+    Byte 7		Group, uses only the lower 5 bits (3 high bits ignored). 0x00 = all bracelets, 0x01-0x1f: bracelets in specified group
     Byte 8-15	unknown/ignored
     
 The iOS app uses the following attack/sustain/release combinations:
@@ -105,14 +105,14 @@ The Group field is not used by the iOS app (it always uses 0x00 = all groups). I
 
 In multicolor mode, the meaning of bytes 2-6 changes as follows:
 
-    Byte 2: low 8 bits of the 12-bit color pool value (encoding unknown)
-    Byte 3: Rest of color pool and attack
-		Bit 0-3: high 4 bits of the 12-bit color pool value
-		Bit 4-5: attack (see above)
-		Bit 6-7: unknown/ignored
-    Byte 4: Sustain and release, same as byte 6 in single-color mode
-    Byte 5: Chance, see above. Bit 3-7 unknown/ignored.
-    Byte 6: unknown/ignored
+    Byte 2:		low 8 bits of the 12-bit color pool value (encoding unknown)
+    Byte 3:		Rest of color pool and attack
+				Bit 0-3: high 4 bits of the 12-bit color pool value
+				Bit 4-5: attack (see above)
+				Bit 6-7: unknown/ignored
+    Byte 4:		Sustain and release, same as byte 6 in single-color mode
+    Byte 5:		Chance, see above. Bit 3-7 unknown/ignored.
+    Byte 6:		unknown/ignored
 
 As far as I can tell, there's no official sanction for using 128-bit Service Class UUIDs in this manner.
 
