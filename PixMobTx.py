@@ -1,14 +1,11 @@
 import serial
 import time
 
-#This is the serial port that the BlueFruit LE Friend was found on my computer
-ser = serial.Serial(port = "/dev/ttyUSB0")
-
 #This defines the AT command that is sent to the BlueFruit LE Friend for transmission. 
 #The AT command function is built up from multiple smaller function calls.
 #Each smaller function call corresponds to a field in the Bluetooth Low Energy advertising packet. 
 def command_pixmob(red, green, blue, chance, attack, sustain, release, clap, oneshot, group):
-	command ="AT+GAPSETADVDATA="+insert_flags()+insert_uuid_header()+insert_flags(clap, oneshot)+insert_color_data(red, green, blue)+insert_asr_chance(chance, attack, sustain, release)+insert_group(group)+insert_eight_bytes_data()+insert_name()
+	command ="AT+GAPSETADVDATA="+insert_flags()+insert_uuid_header()+insert_pixmob_flags(clap, oneshot)+insert_color_data(red, green, blue)+insert_asr_chance(chance, attack, sustain, release)+insert_group(group)+insert_eight_bytes_data()+insert_name()
 	return command
 
 #This field sets the capabilities of the transmitting device (BlueFruit LE Friend)
@@ -23,7 +20,7 @@ def insert_uuid_header():
 
 #PixMob bracelets can be configured to respond to clapping of hands or to ignore identical commands
 #FIXME there is also a multicolor mode, controlled by flags & 0x2, but it needs a different encoding
-def insert_flags(clap, oneshot):
+def insert_pixmob_flags(clap, oneshot):
 	return "-" + ("1" if oneshot else "0") + ("1" if clap else "0")
 
 #This field sets the LED colors.
@@ -80,13 +77,20 @@ def insert_eight_bytes_data():
 def insert_name():
 	return "-04-09-4D-4F-42"
 
-#Construct the bluetooth low energy advertising packet in the form of an AT command. 
-#This is how the BlueFruit LE Friend sends out bluetooth LE packets.
-#The loop range is set to however many repetitions of the AT command one wants to be
-#sent out. There's a short delay between each one.  
-for a in range(0, 5):
-	time.sleep(.5)	
-	#arguments are red, green, blue, attack, sustain, release, chance, clap, oneshot, group
-	by_your_command = command_pixmob(0x99,0,0, 0,7,0, 100, False, False, 0)
-	print by_your_command
-	ser.write(by_your_command+"\r\n")
+def main():
+	#This is the serial port that the BlueFruit LE Friend was found on my computer
+	ser = serial.Serial(port = "/dev/ttyUSB0")
+
+	#Construct the bluetooth low energy advertising packet in the form of an AT command. 
+	#This is how the BlueFruit LE Friend sends out bluetooth LE packets.
+	#The loop range is set to however many repetitions of the AT command one wants to be
+	#sent out. There's a short delay between each one.  
+	for a in range(0, 5):
+		time.sleep(.5)	
+		#arguments are red, green, blue, attack, sustain, release, chance, clap, oneshot, group
+		by_your_command = command_pixmob(0x99,0,0, 0,7,0, 100, False, False, 0)
+		print by_your_command
+		ser.write(by_your_command+"\r\n")
+
+if __name__ == "__main__":
+	main()
