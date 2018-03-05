@@ -63,7 +63,7 @@ The iOS app only uses one command, with opcode 0xEE, meaning "Light up in an RGB
 			Bit 2: Multicolor mode, select (randomly or sequentially) from a pool of colors at every execution
 			Bit 5: One-shot mode, ignore further identical commands after executing once
 			Others ignored
-            If the whole field is set to 0x0f, set a color in the multicolor pool by index, or specify a base color to sustain between commands.
+			If the whole field is set to 0x0f, set a color in the multicolor pool by index, or specify a base color to sustain between commands.
     Byte 2		Green component of color data (00 is off)
     Byte 3		Red component of color data (00 is off)
     Byte 4		Blue component of color data (00 is off)
@@ -79,13 +79,13 @@ The iOS app only uses one command, with opcode 0xEE, meaning "Light up in an RGB
 				7: 5%
 			Bit 3-5: attack
 				0: instant
-                1: fastest
+				1: fastest
 				2: faster
-                3: fast
+				3: fast
 				4: medium
-                5: slow
+				5: slow
 				6: slower
-                7: slowest
+				7: slowest
 			Bit 6-7: ignored
     Byte 6:		Sustain and release
 			Bit 0-2: sustain
@@ -93,7 +93,7 @@ The iOS app only uses one command, with opcode 0xEE, meaning "Light up in an RGB
 				1-6: increasingly longer intervals
 				7: until overridden by another command (when used with release=0, otherwise identical to 6)
 			Bit 3-5: release, encoding identical to attack
-            Bit 6-7: ignored
+			Bit 6-7: ignored
     Byte 7		Group and unknown flag
 			Bit 0-4: Group, 0x00 = all bracelets, 0x01-0x1f: bracelets in specified group
 			Bit 5: unknown flag, apparently related to color randomization in multicolor mode
@@ -114,8 +114,8 @@ In multicolor mode, the meaning of bytes 2-6 changes as follows:
 
     Byte 2:		Lower index limit and part of upper index limit
 			Bit 0-3: lowest color index that may be selected
-            Bit 4-5: lower 2 bits of highest color index that may be selected
-            Bit 6-7: ignored
+			Bit 4-5: lower 2 bits of highest color index that may be selected
+			Bit 6-7: ignored
     Byte 3:		Upper index limit, random flag and attack
 			Bit 0-1: higher 2 bits of the highest color index
 			Bit 2: if set, pick a color randomly from the allowed indexes at every execution, otherwise cycle through them in sequence
@@ -129,9 +129,9 @@ When Flags is set to 0x0f, bytes 5 and 6 change meaning:
 
     Byte 5:		Index to write to, persistence and base color flag
 			Bit 0-3: index to write to 
-            Bit 4: if set, write the color in bytes 2-4 to RAM, if unset, write the color in RAM to NVRAM (?)
-            Bit 5: if set, display this color continuously between commands (not sure if it still writes to RAM or NVRAM with this set)
-            Bit 6-7: ignored
+			Bit 4: if set, write the color in bytes 2-4 to RAM, if unset, write the color in RAM to NVRAM (?)
+			Bit 5: if set, display this color continuously between commands (not sure if it still writes to RAM or NVRAM with this set)
+			Bit 6-7: ignored
     Byte 6:		Meaning unknown, possibly ignored
 
 This enables setting any of the 16 indexed colors, enabling custom color pools/sequences for multicolor mode.
